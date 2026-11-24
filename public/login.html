@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kroma - Iniciar Sesión / Registrarse</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #1f1c2c, #928dab);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .auth-card {
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      width: 100%;
+      max-width: 480px;
+      overflow: hidden;
+    }
+    .auth-header {
+      background-color: #6f42c1;
+      color: white;
+      padding: 25px;
+      text-align: center;
+    }
+    .nav-pills .nav-link.active {
+      background-color: #6f42c1;
+    }
+    .nav-pills .nav-link {
+      color: #6f42c1;
+      font-weight: 600;
+    }
+    .btn-kroma {
+      background-color: #6f42c1;
+      color: white;
+      font-weight: 600;
+    }
+    .btn-kroma:hover {
+      background-color: #59359a;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="auth-card m-3">
+    <!-- Encabezado con la marca -->
+    <div class="auth-header">
+      <h2 class="fw-bold m-0">KROMA</h2>
+      <small>Servicios Estéticos Independientes</small>
+    </div>
+
+    <div class="p-4">
+      <!-- Selector de Pestañas: Login / Registro -->
+      <ul class="nav nav-pills nav-justified mb-4" id="authTabs" role="tablist">
+        <li class="nav-item">
+          <button class="nav-link active" id="pills-login-tab" data-bs-toggle="pill" data-bs-target="#pills-login" type="button">
+            Iniciar Sesión
+          </button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link" id="pills-registro-tab" data-bs-toggle="pill" data-bs-target="#pills-registro" type="button">
+            Crear Cuenta
+          </button>
+        </li>
+      </ul>
+
+      <div id="alertaAuth"></div>
+
+      <div class="tab-content" id="authTabsContent">
+        
+        <!-- ==========================================
+             FORMULARIO 1: INICIO DE SESIÓN
+             ========================================== -->
+        <div class="tab-pane fade show active" id="pills-login">
+          <form id="formLogin">
+            <div class="mb-3">
+              <label class="form-label font-weight-bold">Correo Electrónico</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                <input type="email" id="loginCorreo" class="form-control" placeholder="ejemplo@correo.com" required>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label font-weight-bold">Contraseña</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-kroma w-100 py-2 mt-2">
+              <i class="bi bi-box-arrow-in-right me-1"></i> Ingresar
+            </button>
+          </form>
+        </div>
+
+        <!-- ==========================================
+             FORMULARIO 2: REGISTRO DE USUARIO
+             ========================================== -->
+        <div class="tab-pane fade" id="pills-registro">
+          <form id="formRegistro">
+            <div class="mb-3">
+              <label class="form-label">Nombre Completo *</label>
+              <input type="text" id="regNombre" class="form-control" placeholder="Tu nombre" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Correo Electrónico *</label>
+              <input type="email" id="regCorreo" class="form-control" placeholder="ejemplo@correo.com" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Teléfono de Contacto</label>
+              <input type="tel" id="regTelefono" class="form-control" placeholder="300 000 0000">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Tipo de Cuenta *</label>
+              <select id="regRol" class="form-select" required>
+                <option value="Cliente">Cliente (Busco servicios estéticos)</option>
+                <option value="Profesional">Trabajador Independiente (Ofrezco servicios)</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Contraseña *</label>
+              <input type="password" id="regPassword" class="form-control" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="btn btn-kroma w-100 py-2 mt-2">
+              <i class="bi bi-person-plus me-1"></i> Registrarme
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_AUTH = 'http://localhost:3000/api/auth';
+    const alerta = document.getElementById('alertaAuth');
+
+    // Función para mostrar alertas rápidas
+    function mostrarAlerta(mensaje, tipo) {
+      alerta.innerHTML = `<div class="alert alert-${tipo} alert-dismissible fade show" role="alert">
+        ${mensaje}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>`;
+    }
+
+    // ==========================================
+    // INICIAR SESIÓN
+    // ==========================================
+    document.getElementById('formLogin').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const correo = document.getElementById('loginCorreo').value;
+      const password = document.getElementById('loginPassword').value;
+
+      try {
+        const res = await fetch(`${API_AUTH}/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ correo, password })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          // Guardar datos de sesión en el navegador
+          localStorage.setItem('kroma_token', data.token);
+          localStorage.setItem('kroma_rol', data.usuario.rol);
+          localStorage.setItem('kroma_nombre', data.usuario.nombre);
+
+          mostrarAlerta('Inicio de sesión exitoso. Redirigiendo...', 'success');
+
+          // Redireccionar según el Rol del usuario
+          setTimeout(() => {
+            if (data.usuario.rol === 'Administrador') {
+              window.location.href = 'index.html'; // Panel de Admin
+            } else {
+              alert(`¡Bienvenido/a ${data.usuario.nombre}! Has ingresado como ${data.usuario.rol}.`);
+              // Redireccionar a vista del profesional o cliente cuando esté implementada
+            }
+          }, 1000);
+
+        } else {
+          mostrarAlerta(data.error || 'Credenciales inválidas', 'danger');
+        }
+      } catch (err) {
+        mostrarAlerta('Error de conexión con el servidor.', 'danger');
+      }
+    });
+
+    // ==========================================
+    // REGISTRAR CUENTA
+    // ==========================================
+    document.getElementById('formRegistro').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const nombre_completo = document.getElementById('regNombre').value;
+      const correo = document.getElementById('regCorreo').value;
+      const telefono = document.getElementById('regTelefono').value;
+      const rol_nombre = document.getElementById('regRol').value;
+      const password = document.getElementById('regPassword').value;
+
+      try {
+        const res = await fetch(`${API_AUTH}/registro`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nombre_completo, correo, telefono, rol_nombre, password })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          mostrarAlerta('Cuenta creada exitosamente. Ya puedes iniciar sesión.', 'success');
+          document.getElementById('formRegistro').reset();
+          // Cambiar a la pestaña de Login
+          const tabLogin = new bootstrap.Tab(document.getElementById('pills-login-tab'));
+          tabLogin.show();
+        } else {
+          mostrarAlerta(data.error || 'Error al registrar la cuenta.', 'danger');
+        }
+      } catch (err) {
+        mostrarAlerta('Error de conexión con el servidor.', 'danger');
+      }
+    });
+  </script>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
