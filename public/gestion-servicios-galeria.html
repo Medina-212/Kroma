@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kroma - Panel Trabajador Independiente</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body { background-color: #f8f9fa; }
+    .navbar-brand { font-weight: 800; letter-spacing: 1px; color: #6f42c1 !important; }
+    .card { border: none; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .nav-pills .nav-link.active { background-color: #6f42c1; }
+    .nav-pills .nav-link { color: #495057; font-weight: 600; }
+    .btn-kroma { background-color: #6f42c1; color: white; font-weight: 600; }
+    .btn-kroma:hover { background-color: #59359a; color: white; }
+    .galeria-img { width: 100%; height: 200px; object-fit: cover; border-top-left-radius: 12px; border-top-right-radius: 12px; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+    <div class="container-fluid px-4">
+      <a class="navbar-brand fs-3" href="#">KROMA <span class="fs-6 text-muted">| Profesional</span></a>
+      <span class="badge bg-secondary fs-6" id="saludoProfesional">Barrio Calatrava</span>
+      <button class="btn btn-outline-danger btn-sm" onclick="cerrarSesion()">
+        <i class="bi bi-box-arrow-right me-1"></i> Cerrar Sesión
+      </button>
+    </div>
+  </nav>
+
+  <div class="container py-4">
+    <h2 class="fw-bold mb-2 text-secondary">Gestión de Perfil Profesional</h2>
+    <p class="text-muted mb-4">Administra tu identidad comercial, catálogo de servicios y galería de trabajos en Calatrava.</p>
+
+    <ul class="nav nav-pills mb-4" id="profTabs" role="tablist">
+      <li class="nav-item">
+        <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-perfil" type="button">
+          <i class="bi bi-person-badge-fill me-1"></i> Mi Perfil (HU-04)
+        </button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-servicios" type="button" onclick="cargarServicios()">
+          <i class="bi bi-scissors me-1"></i> Mis Servicios (HU-05)
+        </button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-galeria" type="button" onclick="cargarTrabajos()">
+          <i class="bi bi-images me-1"></i> Trabajos Realizados (HU-06)
+        </button>
+      </li>
+    </ul>
+
+    <div class="tab-content">
+      <!-- HU-04: PERFIL PROFESIONAL -->
+      <div class="tab-pane fade show active" id="tab-perfil">
+        <div class="card p-4">
+          <h5 class="fw-bold mb-3"><i class="bi bi-shop text-primary me-2"></i>Información Comercial</h5>
+          <div id="alerta-perfil"></div>
+          <form id="form-perfil" class="row g-3" enctype="multipart/form-data">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Nombre Comercial *</label>
+              <input type="text" id="prof-nombre" class="form-control" placeholder="Ej: Barbería Estilo Calatrava" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Especialidad / Categoría *</label>
+              <select id="prof-categoria" class="form-select" required>
+                <option value="">Selecciona una categoría...</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Barrio / Ubicación *</label>
+              <input type="text" id="prof-barrio" class="form-control" value="Calatrava" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Teléfono / WhatsApp de Contacto *</label>
+              <input type="tel" id="prof-telefono" class="form-control" placeholder="300 000 0000" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Foto de Perfil (JPG, PNG, WEBP - Máx 5 MB)</label>
+              <input type="file" id="prof-foto" class="form-control" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
+            </div>
+            <div class="col-md-6 d-flex align-items-end">
+              <img id="preview-foto-perfil" src="" alt="Foto de perfil" class="rounded-circle border d-none" style="width: 64px; height: 64px; object-fit: cover;">
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-semibold">Descripción de tu experiencia y servicios</label>
+              <textarea id="prof-descripcion" class="form-control" rows="3" placeholder="Cuéntale a tus clientes sobre tu trayectoria..."></textarea>
+            </div>
+            <div class="col-12">
+              <button type="submit" class="btn btn-kroma px-4">
+                <i class="bi bi-save me-1"></i> Guardar Perfil Profesional
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- HU-05: PUBLICAR SERVICIOS -->
+      <div class="tab-pane fade" id="tab-servicios">
+        <div class="row g-4">
+          <div class="col-md-5">
+            <div class="card p-4">
+              <h5 class="fw-bold mb-3"><i class="bi bi-plus-circle text-primary me-2"></i>Publicar Servicio</h5>
+              <div id="alerta-servicios"></div>
+              <form id="form-servicio">
+                <div class="mb-3">
+                  <label class="form-label fw-semibold">Nombre del Servicio *</label>
+                  <input type="text" id="srv-nombre" class="form-control" placeholder="Ej: Corte degradado + barba" required>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label fw-semibold">Tiempo Estimado *</label>
+                  <input type="text" id="srv-tiempo" class="form-control" placeholder="Ej: 45 min" required>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label fw-semibold">Precio (COP) *</label>
+                  <input type="number" id="srv-precio" class="form-control" min="0" step="500" placeholder="Ej: 25000" required>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label fw-semibold">Descripción *</label>
+                  <textarea id="srv-descripcion" class="form-control" rows="3" placeholder="Detalla qué incluye..." required></textarea>
+                </div>
+                <button type="submit" class="btn btn-kroma w-100">
+                  <i class="bi bi-check-circle me-1"></i> Publicar Servicio
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <div class="col-md-7">
+            <div class="card p-4">
+              <h5 class="fw-bold mb-3"><i class="bi bi-list-check text-success me-2"></i>Mi Catálogo Publicado</h5>
+              <div id="lista-servicios" class="d-grid gap-3"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HU-06: TRABAJOS REALIZADOS -->
+      <div class="tab-pane fade" id="tab-galeria">
+        <div class="card p-4 mb-4">
+          <h5 class="fw-bold mb-3"><i class="bi bi-cloud-upload text-primary me-2"></i>Subir Fotografía a mi Galería</h5>
+          <div id="alerta-trabajos"></div>
+          <form id="form-trabajo" class="row g-3" enctype="multipart/form-data">
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Título del Trabajo</label>
+              <input type="text" id="trab-titulo" class="form-control" placeholder="Ej: Uñas acrílicas diseño francés">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Fotografía (JPG, PNG, WEBP - Máx 5 MB) *</label>
+              <input type="file" id="trab-imagen" class="form-control" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Descripción breve</label>
+              <input type="text" id="trab-descripcion" class="form-control" placeholder="Detalles del acabado">
+            </div>
+            <div class="col-12">
+              <button type="submit" class="btn btn-kroma px-4">
+                <i class="bi bi-image me-1"></i> Subir a Galería
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="row g-4" id="galeria-trabajos"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/profesional-servicios-galeria.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

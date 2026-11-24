@@ -1,29 +1,32 @@
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
-// Middleware para verificar que sea Administrador
-const verificarAdmin = (req, res, next) => {
+const JWT_SECRET = process.env.JWT_SECRET || 'clave_secreta_kroma';
+
+function verificarToken(req, res, next) {
   const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1]; // Formato: Bearer TOKEN
+  const token = authHeader && authHeader.split(' ')[1];
 
   if (!token) {
-    return res.status(401).json({ error: 'Acceso no autorizado. Se requiere iniciar sesión.' });
+    return res.status(401).json({ error: 'Acceso denegado. Token no proporcionado.' });
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'clave_secreta_kroma');
-    
-    // RESTRICCIÓN DE SEGURIDAD: Solo el rol 'Administrador' puede pasar
-    if (decoded.rol !== 'Administrador') {
-      return res.status(403).json({ 
-        error: 'Acceso denegado. No tienes permisos de Administrador para acceder a este recurso.' 
-      });
-    }
-
-    req.usuario = decoded; // Adjuntar datos del token a la petición
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.usuario = decoded; // { id, correo, rol }
     next();
-  } catch (err) {
+  } catch (error) {
     return res.status(403).json({ error: 'Token inválido o expirado.' });
   }
-};
+}
 
-module.exports = { verificarAdmin };
+function verificarAdmin(req, res, next) {
+  verificarToken(req, res, () => {
+    if (req.usuario.rol !== 'Administrador') {
+      return res.status(403).json({ error: 'Acceso denegado. Se requieren permisos de Administrador.' });
+    }
+    next();
+  });
+}
+
+module.exports = { verificarToken, verificarAdmin };

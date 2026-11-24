@@ -181,9 +181,11 @@
           setTimeout(() => {
             if (data.usuario.rol === 'Administrador') {
               window.location.href = 'index.html'; // Panel de Admin
+            } else if (data.usuario.rol === 'Profesional') {
+              window.location.href = 'gestion-servicios-galeria.html'; // Panel del Trabajador Independiente
             } else {
               alert(`¡Bienvenido/a ${data.usuario.nombre}! Has ingresado como ${data.usuario.rol}.`);
-              // Redireccionar a vista del profesional o cliente cuando esté implementada
+              // Redireccionar a vista del cliente cuando esté implementada
             }
           }, 1000);
 

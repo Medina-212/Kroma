@@ -5,6 +5,7 @@ require('dotenv').config();
 
 const adminRoutes = require('./routes/adminRoutes');
 const authRoutes = require('./routes/authRoutes');
+const profesionalRoutes = require('./routes/profesionalRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -32,6 +33,8 @@ app.use(express.static('public'));
 // 3. Rutas API de Kroma
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/profesional', profesionalRoutes);
+
 
 // Iniciar servidor
 app.listen(PORT, () => {
