@@ -63,7 +63,7 @@ async function obtenerPerfilPorUsuario(usuarioId) {
 }
 
 // ============================================================================
-// HU-04: CREAR / COMPLETAR PERFIL PROFESIONAL
+// CREAR / COMPLETAR PERFIL PROFESIONAL
 // ============================================================================
 
 // Obtener datos actuales del perfil profesional
@@ -133,7 +133,7 @@ router.put('/perfil', verificarToken, manejarSubidaImagen('foto_perfil'), async 
 });
 
 // ============================================================================
-// HU-05: PUBLICAR Y ADMINISTRAR SERVICIOS ESTÉTICOS
+//  PUBLICAR Y ADMINISTRAR SERVICIOS ESTÉTICOS
 // ============================================================================
 
 router.get('/servicios', verificarToken, async (req, res) => {
@@ -220,7 +220,7 @@ router.delete('/servicios/:id', verificarToken, async (req, res) => {
 });
 
 // ============================================================================
-// HU-06: MOSTRAR TRABAJOS REALIZADOS (GALERÍA FOTOGRÁFICA)
+// MOSTRAR TRABAJOS REALIZADOS (GALERÍA FOTOGRÁFICA)
 // ============================================================================
 
 router.get('/trabajos', verificarToken, async (req, res) => {

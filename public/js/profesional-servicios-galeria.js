@@ -27,7 +27,7 @@ function mostrarAlerta(idElemento, mensaje, tipoBootstrap) {
 }
 
 // ============================================================================
-// HU-04: PERFIL PROFESIONAL
+// PERFIL PROFESIONAL
 // ============================================================================
 
 async function cargarCategoriasYPerfil() {
@@ -99,7 +99,7 @@ document.getElementById('form-perfil').addEventListener('submit', async (e) => {
 });
 
 // ============================================================================
-// HU-05: SERVICIOS
+// SERVICIOS
 // ============================================================================
 
 async function cargarServicios() {
@@ -188,7 +188,7 @@ async function eliminarServicio(id) {
 }
 
 // ============================================================================
-// HU-06: GALERÍA DE TRABAJOS REALIZADOS
+// GALERÍA DE TRABAJOS REALIZADOS
 // ============================================================================
 
 async function cargarTrabajos() {
